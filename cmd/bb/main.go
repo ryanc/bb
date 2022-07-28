@@ -94,11 +94,11 @@ func main() {
 		log.Fatalf("error creating Discord session: %v\n", err)
 	}
 
-	dg.AddHandler(command.PingHandler)
+	dg.AddHandler(command.NewPingHandler().Handle)
 	dg.AddHandler(reactionHandler)
 	dg.AddHandler(praiseHandler)
-	dg.AddHandler(command.RollHandler)
-	dg.AddHandler(command.RouletteHandler)
+	dg.AddHandler(command.NewRollHandler().Handle)
+	dg.AddHandler(command.NewRouletteHandler().Handle)
 
 	h := command.NewWeatherHandler(C.Handler.Weather)
 	dg.AddHandler(h.Handle)

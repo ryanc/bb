@@ -14,8 +14,7 @@ type (
 )
 
 func NewTimeHandler() *TimeHandler {
-	var h *TimeHandler = new(TimeHandler)
-	return h
+	return new(TimeHandler)
 }
 
 func (h *TimeHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {

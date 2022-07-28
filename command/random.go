@@ -34,7 +34,9 @@ type (
 		N int
 	}
 
-	CoinHandler struct{}
+	CoinHandler     struct{}
+	RollHandler     struct{}
+	RouletteHandler struct{}
 )
 
 var (
@@ -140,7 +142,11 @@ func (g *Gun) IsEmpty() bool {
 	return true
 }
 
-func RollHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+func NewRollHandler() *RollHandler {
+	return new(RollHandler)
+}
+
+func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var (
 		err       error
 		msg, roll string
@@ -178,7 +184,11 @@ func RollHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
-func RouletteHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+func NewRouletteHandler() *RouletteHandler {
+	return new(RouletteHandler)
+}
+
+func (h *RouletteHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}

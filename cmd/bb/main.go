@@ -27,7 +27,7 @@ var (
 
 	defaultReactions []string = []string{"👍", "🌶️", "🤣", "😂", "🍆", "🍑", "❤️", "💦", "😍", "💩", "🔥", "🍒", "🎉", "🥳", "🎊"}
 
-	config Config
+	C Config
 )
 
 type (
@@ -75,7 +75,7 @@ func main() {
 
 	Token, ok := viper.Get("discord_token").(string)
 
-	err = viper.Unmarshal(&config)
+	err = viper.Unmarshal(&C)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}
@@ -132,8 +132,8 @@ func reactionHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	emojis := config.Handler.Reaction.Emojis
-	channels := config.Handler.Reaction.Channels
+	emojis := C.Handler.Reaction.Emojis
+	channels := C.Handler.Reaction.Channels
 
 	if len(emojis) == 0 {
 		log.Warning("emoji list is empty")

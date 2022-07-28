@@ -36,7 +36,8 @@ type (
 	}
 
 	HandlerConfig struct {
-		Reaction ReactionConfig `mapstructure:"reaction"`
+		Reaction ReactionConfig        `mapstructure:"reaction"`
+		Weather  command.WeatherConfig `mapstructure:"weather"`
 	}
 
 	ReactionConfig struct {
@@ -98,6 +99,12 @@ func main() {
 	dg.AddHandler(praiseHandler)
 	dg.AddHandler(command.RollHandler)
 	dg.AddHandler(command.RouletteHandler)
+
+	h := command.NewWeatherHandler(C.Handler.Weather)
+	dg.AddHandler(h.Handle)
+
+	dg.AddHandler(command.NewCoinHandler().Handle)
+	dg.AddHandler(command.NewTimeHandler().Handle)
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
 

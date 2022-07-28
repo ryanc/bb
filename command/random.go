@@ -28,10 +28,14 @@ type (
 		S         string
 	}
 
+	Coin bool
+
 	Gun struct {
 		C [6]bool
 		N int
 	}
+
+	CoinHandler struct{}
 )
 
 var (
@@ -92,6 +96,11 @@ func (r *Roll) RollDice() {
 		r.Rolls = append(r.Rolls, roll)
 		r.Sum += roll
 	}
+}
+
+func (c *Coin) Flip() bool {
+	*c = Coin(Itob(RandInt(0, 1)))
+	return bool(*c)
 }
 
 func NewGun() *Gun {
@@ -192,64 +201,31 @@ func RouletteHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func RollCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func NewCoinHandler() *CoinHandler {
+	return new(CoinHandler)
+}
+
+func (h *CoinHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var (
-		err error
+		c   Coin
 		msg string
-		r   *Roll
 	)
 
-	options := i.ApplicationCommandData().Options
-
-	roll := options[0].StringValue()
-
-	r, err = ParseRoll(roll)
-
-	if err != nil {
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: err.Error(),
-			},
-		})
+	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	r.RollDice()
-	log.Debugf("rolled dice: %+v", r)
-
-	if msg == "" {
-		msg = fmt.Sprintf("🎲 %s = %d", JoinInt(r.Rolls, " + "), r.Sum)
+	if !strings.HasPrefix(m.Content, "!coin") {
+		return
 	}
 
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: msg,
-		},
-	})
-}
-
-func CoinCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	var (
-		r   int
-		msg string
-	)
-
-	r = RandInt(1, 2)
-
-	if r == 1 {
+	if c.Flip() {
 		msg = "heads"
 	} else {
 		msg = "tails"
 	}
 
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: msg,
-		},
-	})
+	s.ChannelMessageSend(m.ChannelID, msg)
 }
 
 func RandInt(min int, max int) int {
@@ -274,4 +250,12 @@ func SumInt(a []int) int {
 		sum += v
 	}
 	return sum
+}
+
+func Itob(v int) bool {
+	if v == 1 {
+		return true
+	}
+
+	return false
 }

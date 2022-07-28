@@ -23,7 +23,10 @@ func NewTimeHandler() *TimeHandler {
 }
 
 func (h *TimeHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
-	var tz string
+	var (
+		t  time.Time
+		tz string
+	)
 
 	if m.Author.ID == s.State.User.ID {
 		return
@@ -35,20 +38,25 @@ func (h *TimeHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	x := strings.SplitN(m.Content, " ", 2)
 
-	if len(x) != 2 {
+	if len(x) > 2 {
 		s.ChannelMessageSend(m.ChannelID, "help: `!time TIMEZONE`")
-		return
-	}
-
-	tz = x[1]
-
-	loc, err := time.LoadLocation(tz)
-	if err != nil {
-		log.Warnf("failed to load location: %s", err)
 		return
 	}
 
 	now := time.Now()
 
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprint(now.In(loc)))
+	if len(x) == 2 {
+		tz = x[1]
+		loc, err := time.LoadLocation(tz)
+		if err != nil {
+			log.Warnf("failed to load location: %s", err)
+			s.ChannelMessageSend(m.ChannelID, err.Error())
+			return
+		}
+		t = now.In(loc)
+	} else {
+		t = now
+	}
+
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprint(t))
 }

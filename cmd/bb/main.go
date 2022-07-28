@@ -15,10 +15,9 @@ import (
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/command"
+
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
-
-	// log "github.com/golang/glog"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -27,44 +26,6 @@ var (
 	Token string
 
 	defaultReactions []string = []string{"👍", "🌶️", "🤣", "😂", "🍆", "🍑", "❤️", "💦", "😍", "💩", "🔥", "🍒", "🎉", "🥳", "🎊"}
-
-	commands = []*discordgo.ApplicationCommand{
-		{
-			Name:        "poop",
-			Type:        discordgo.ChatApplicationCommand,
-			Description: "Hot and steamy",
-		},
-		{
-			Name:        "ping",
-			Type:        discordgo.ChatApplicationCommand,
-			Description: "Ping the bot",
-		},
-		{
-			Name:        "roll",
-			Type:        discordgo.ChatApplicationCommand,
-			Description: "Roll a dice",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "dice",
-					Description: "Dice specification e.g. d4 or 2d6",
-					Required:    true,
-				},
-			},
-		},
-		{
-			Name:        "coin",
-			Type:        discordgo.ChatApplicationCommand,
-			Description: "Flip a coin",
-		},
-	}
-
-	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"ping": command.PingCommand,
-		"poop": command.PoopCommand,
-		"roll": command.RollCommand,
-		"coin": command.CoinCommand,
-	}
 
 	config Config
 )
@@ -144,19 +105,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error opening connection: %v\n", err)
 	}
-
-	for _, c := range commands {
-		_, err := dg.ApplicationCommandCreate(dg.State.User.ID, "", c)
-		if err != nil {
-			log.Errorf("Cannot create '%v' command %v", c.Name, err)
-		}
-	}
-
-	dg.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
-			h(s, i)
-		}
-	})
 
 	log.Info("The bot is now running. Press CTRL-C to exit.")
 

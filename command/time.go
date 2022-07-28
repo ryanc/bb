@@ -9,10 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const ()
-
-var ()
-
 type (
 	TimeHandler struct{}
 )

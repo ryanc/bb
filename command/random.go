@@ -3,7 +3,6 @@ package command
 import (
 	"errors"
 	"fmt"
-	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
@@ -226,36 +225,4 @@ func (h *CoinHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	s.ChannelMessageSend(m.ChannelID, msg)
-}
-
-func RandInt(min int, max int) int {
-	return rand.Intn(max-min+1) + min
-}
-
-func JoinInt(a []int, sep string) string {
-	var b []string
-
-	b = make([]string, len(a))
-
-	for i, v := range a {
-		b[i] = strconv.Itoa(v)
-	}
-
-	return strings.Join(b, sep)
-}
-
-func SumInt(a []int) int {
-	var sum int
-	for _, v := range a {
-		sum += v
-	}
-	return sum
-}
-
-func Itob(v int) bool {
-	if v == 1 {
-		return true
-	}
-
-	return false
 }

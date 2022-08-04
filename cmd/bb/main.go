@@ -26,22 +26,15 @@ var (
 
 	defaultReactions []string = []string{"👍", "🌶️", "🤣", "😂", "🍆", "🍑", "❤️", "💦", "😍", "💩", "🔥", "🍒", "🎉", "🥳", "🎊"}
 
-	C Config
-)
+	C command.Config
 
-type (
-	Config struct {
-		Handler HandlerConfig `mapstructure:"handler"`
-	}
-
-	HandlerConfig struct {
-		Reaction ReactionConfig        `mapstructure:"reaction"`
-		Weather  command.WeatherConfig `mapstructure:"weather"`
-	}
-
-	ReactionConfig struct {
-		Emojis   []string
-		Channels []string
+	handlers []command.CommandHandler = []command.CommandHandler{
+		command.NewCoinHandler(),
+		command.NewPingHandler(),
+		command.NewRollHandler(),
+		command.NewRouletteHandler(),
+		command.NewTimeHandler(),
+		command.NewWeatherHandler(),
 	}
 )
 
@@ -93,17 +86,13 @@ func main() {
 		log.Fatalf("error creating Discord session: %v\n", err)
 	}
 
-	dg.AddHandler(command.NewPingHandler().Handle)
+	for _, h := range handlers {
+		h.SetConfig(C)
+		dg.AddHandler(h.Handle)
+	}
+
 	dg.AddHandler(reactionHandler)
 	dg.AddHandler(praiseHandler)
-	dg.AddHandler(command.NewRollHandler().Handle)
-	dg.AddHandler(command.NewRouletteHandler().Handle)
-
-	h := command.NewWeatherHandler(C.Handler.Weather)
-	dg.AddHandler(h.Handle)
-
-	dg.AddHandler(command.NewCoinHandler().Handle)
-	dg.AddHandler(command.NewTimeHandler().Handle)
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
 

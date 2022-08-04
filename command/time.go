@@ -10,11 +10,17 @@ import (
 )
 
 type (
-	TimeHandler struct{}
+	TimeHandler struct {
+		config Config
+	}
 )
 
 func NewTimeHandler() *TimeHandler {
 	return new(TimeHandler)
+}
+
+func (h *TimeHandler) SetConfig(config Config) {
+	h.config = config
 }
 
 func (h *TimeHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {

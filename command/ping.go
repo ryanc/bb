@@ -4,16 +4,21 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-
 	log "github.com/sirupsen/logrus"
 )
 
 type (
-	PingHandler struct{}
+	PingHandler struct {
+		config Config
+	}
 )
 
 func NewPingHandler() *PingHandler {
 	return new(PingHandler)
+}
+
+func (h *PingHandler) SetConfig(config Config) {
+	h.config = config
 }
 
 func (h *PingHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {

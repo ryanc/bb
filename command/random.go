@@ -34,9 +34,16 @@ type (
 		N int
 	}
 
-	CoinHandler     struct{}
-	RollHandler     struct{}
-	RouletteHandler struct{}
+	CoinHandler struct {
+		config Config
+	}
+	RollHandler struct {
+		config Config
+	}
+
+	RouletteHandler struct {
+		config Config
+	}
 )
 
 var (
@@ -146,6 +153,10 @@ func NewRollHandler() *RollHandler {
 	return new(RollHandler)
 }
 
+func (h *RollHandler) SetConfig(config Config) {
+	h.config = config
+}
+
 func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var (
 		err       error
@@ -188,6 +199,10 @@ func NewRouletteHandler() *RouletteHandler {
 	return new(RouletteHandler)
 }
 
+func (h *RouletteHandler) SetConfig(config Config) {
+	h.config = config
+}
+
 func (h *RouletteHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
@@ -212,6 +227,10 @@ func (h *RouletteHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreat
 
 func NewCoinHandler() *CoinHandler {
 	return new(CoinHandler)
+}
+
+func (h *CoinHandler) SetConfig(config Config) {
+	h.config = config
 }
 
 func (h *CoinHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {

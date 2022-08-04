@@ -1,20 +1,19 @@
 package main
 
 import (
-	"encoding/binary"
 	"flag"
 	"fmt"
 
 	//"log"
-	crypto_rand "crypto/rand"
+
 	"math/rand"
-	math_rand "math/rand"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/command"
+	"git.kill0.net/chill9/beepboop/lib"
 
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
@@ -60,7 +59,7 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	seedRand()
+	lib.SeedMathRand()
 
 	viper.SetDefault("handler.reaction.emojis", defaultReactions)
 	viper.SetEnvPrefix("BEEPBOOP")
@@ -177,17 +176,4 @@ func contains[T comparable](s []T, v T) bool {
 		}
 	}
 	return false
-}
-
-func seedRand() {
-	var b [8]byte
-
-	_, err := crypto_rand.Read(b[:])
-	if err != nil {
-		log.Panicf("cannot seed math/rand: %s", err)
-	}
-
-	log.Debugf("seeding math/rand %+v %+v", b, binary.LittleEndian.Uint64(b[:]))
-
-	math_rand.Seed(int64(binary.LittleEndian.Uint64(b[:])))
 }

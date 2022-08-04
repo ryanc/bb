@@ -15,7 +15,7 @@ var (
 )
 
 // SeedMathRand Credit: https://github.com/hashicorp/consul/blob/main/lib/rand.go
-func SeedMathRand() {
+func SeedMathRand() error {
 	var (
 		n   *big.Int
 		err error
@@ -25,10 +25,11 @@ func SeedMathRand() {
 		n, err = crand.Int(crand.Reader, big.NewInt(math.MaxInt64))
 		if err != nil {
 			log.Errorf("cannot seed math/rand: %s", err)
+		} else {
+			log.Debugf("seeding math/rand %+v", n.Int64())
+			rand.Seed(n.Int64())
 		}
-
-		log.Debugf("seeding math/rand %+v", n.Int64())
-
-		rand.Seed(n.Int64())
 	})
+
+	return err
 }

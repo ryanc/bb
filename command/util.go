@@ -45,3 +45,19 @@ func BuildURI(rawuri, rawpath string) string {
 	u.Path = path.Join(u.Path, rawpath)
 	return u.String()
 }
+
+func HasCommand(s, prefix, cmd string) bool {
+	if len(s) < 2 {
+		return false
+	}
+
+	if string(s[0]) != prefix {
+		return false
+	}
+
+	if s[1:] == cmd {
+		return true
+	}
+
+	return false
+}

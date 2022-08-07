@@ -33,8 +33,8 @@ var (
 		command.NewPingHandler(),
 		command.NewRollHandler(),
 		command.NewRouletteHandler(),
-		command.NewSourceHandler(),
 		command.NewTimeHandler(),
+		command.NewVersionHandler("version"),
 		command.NewWeatherHandler(),
 	}
 )

@@ -147,14 +147,18 @@ func reactionHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	for _, a := range m.Attachments {
 		if strings.HasPrefix(a.ContentType, "image/") {
-			r := emojis[rand.Intn(len(emojis))]
-			s.MessageReactionAdd(m.ChannelID, m.ID, r)
+			for i := 0; i < command.RandInt(1, len(emojis)); i++ {
+				r := emojis[rand.Intn(len(emojis))]
+				s.MessageReactionAdd(m.ChannelID, m.ID, r)
+			}
 		}
 	}
 
 	for range m.Embeds {
-		r := emojis[rand.Intn(len(emojis))]
-		s.MessageReactionAdd(m.ChannelID, m.ID, r)
+		for i := 0; i < command.RandInt(1, len(emojis)); i++ {
+			r := emojis[rand.Intn(len(emojis))]
+			s.MessageReactionAdd(m.ChannelID, m.ID, r)
+		}
 	}
 
 }

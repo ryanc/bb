@@ -6,13 +6,12 @@ import (
 
 	//"log"
 
-	"math/rand"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/bot"
+	handler "git.kill0.net/chill9/beepboop/bot/handlers"
 	"git.kill0.net/chill9/beepboop/command"
 	"git.kill0.net/chill9/beepboop/lib"
 
@@ -33,6 +32,7 @@ var (
 		command.NewTimeHandler(),
 		command.NewVersionHandler("version"),
 		command.NewWeatherHandler(),
+		handler.NewReactionHandler(),
 	}
 )
 
@@ -40,6 +40,8 @@ func main() {
 	var (
 		err error
 	)
+
+	C = bot.NewConfig()
 
 	flag.Bool("debug", false, "enable debug logging")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
@@ -84,9 +86,6 @@ func main() {
 		dg.AddHandler(h.Handle)
 	}
 
-	dg.AddHandler(reactionHandler)
-	dg.AddHandler(praiseHandler)
-
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
 
 	err = dg.Open()
@@ -103,63 +102,4 @@ func main() {
 	<-sc
 
 	log.Info("Shutting down")
-}
-
-func praiseHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	if strings.Contains(m.Content, "good bot") {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> Thank you, daddy.", m.Author.ID))
-	}
-}
-
-func reactionHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	emojis := C.Handler.Reaction.Emojis
-	channels := C.Handler.Reaction.Channels
-
-	if len(emojis) == 0 {
-		log.Warning("emoji list is empty")
-		return
-	}
-
-	channel, err := s.Channel(m.ChannelID)
-	if err != nil {
-		log.Fatalf("unable to get channel name: %v", err)
-	}
-
-	if len(channels) > 0 && !contains(channels, channel.Name) {
-		return
-	}
-
-	for _, a := range m.Attachments {
-		if strings.HasPrefix(a.ContentType, "image/") {
-			for i := 1; i <= command.RandInt(1, len(emojis)); i++ {
-				r := emojis[rand.Intn(len(emojis))]
-				s.MessageReactionAdd(m.ChannelID, m.ID, r)
-			}
-		}
-	}
-
-	for range m.Embeds {
-		for i := 1; i <= command.RandInt(1, len(emojis)); i++ {
-			r := emojis[rand.Intn(len(emojis))]
-			s.MessageReactionAdd(m.ChannelID, m.ID, r)
-		}
-	}
-
-}
-
-func contains[T comparable](s []T, v T) bool {
-	for _, x := range s {
-		if x == v {
-			return true
-		}
-	}
-	return false
 }

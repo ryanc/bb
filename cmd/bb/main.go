@@ -22,8 +22,6 @@ import (
 )
 
 var (
-	Token string
-
 	defaultReactions []string = []string{"👍", "🌶️", "🤣", "😂", "🍆", "🍑", "❤️", "💦", "😍", "💩", "🔥", "🍒", "🎉", "🥳", "🎊"}
 
 	C command.Config
@@ -62,27 +60,23 @@ func main() {
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
 	err = viper.ReadInConfig()
+	viper.BindEnv("DISCORD_TOKEN")
+	viper.BindEnv("OPEN_WEATHER_MAP_TOKEN")
 
 	if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 		log.Fatalf("fatal error config file: %v", err)
 	}
-
-	Token, ok := viper.Get("discord_token").(string)
 
 	err = viper.Unmarshal(&C)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}
 
-	if Token == "" {
+	if C.DiscordToken == "" {
 		log.Fatalf("Discord token is not set")
 	}
 
-	if !ok {
-		log.Fatalf("Invalid type assertion")
-	}
-
-	dg, err := discordgo.New(fmt.Sprintf("Bot %s", Token))
+	dg, err := discordgo.New(fmt.Sprintf("Bot %s", C.DiscordToken))
 	if err != nil {
 		log.Fatalf("error creating Discord session: %v\n", err)
 	}

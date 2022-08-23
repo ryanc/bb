@@ -10,8 +10,10 @@ var (
 
 type (
 	Config struct {
-		Handler HandlerConfig `mapstructure:"handler"`
-		Prefix  string        `mapstructure:"prefix"`
+		Handler             HandlerConfig `mapstructure:"handler"`
+		Prefix              string        `mapstructure:"prefix"`
+		DiscordToken        string        `mapstructure:"discord_token"`
+		OpenWeatherMapToken string        `mapstructure:"open_weather_map_token"`
 	}
 
 	HandlerConfig struct {

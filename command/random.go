@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"git.kill0.net/chill9/beepboop/bot"
 	"github.com/bwmarrin/discordgo"
 
 	log "github.com/sirupsen/logrus"
@@ -35,14 +36,14 @@ type (
 	}
 
 	CoinHandler struct {
-		config Config
+		config bot.Config
 	}
 	RollHandler struct {
-		config Config
+		config bot.Config
 	}
 
 	RouletteHandler struct {
-		config Config
+		config bot.Config
 	}
 )
 
@@ -153,7 +154,7 @@ func NewRollHandler() *RollHandler {
 	return new(RollHandler)
 }
 
-func (h *RollHandler) SetConfig(config Config) {
+func (h *RollHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 
@@ -199,7 +200,7 @@ func NewRouletteHandler() *RouletteHandler {
 	return new(RouletteHandler)
 }
 
-func (h *RouletteHandler) SetConfig(config Config) {
+func (h *RouletteHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 
@@ -229,7 +230,7 @@ func NewCoinHandler() *CoinHandler {
 	return new(CoinHandler)
 }
 
-func (h *CoinHandler) SetConfig(config Config) {
+func (h *CoinHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 

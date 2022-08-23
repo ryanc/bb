@@ -3,13 +3,14 @@ package command
 import (
 	"strings"
 
+	"git.kill0.net/chill9/beepboop/bot"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
 type (
 	PingHandler struct {
-		config Config
+		config bot.Config
 	}
 )
 
@@ -17,7 +18,7 @@ func NewPingHandler() *PingHandler {
 	return new(PingHandler)
 }
 
-func (h *PingHandler) SetConfig(config Config) {
+func (h *PingHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 

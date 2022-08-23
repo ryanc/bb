@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
+	"git.kill0.net/chill9/beepboop/bot"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -13,7 +14,7 @@ const (
 
 type (
 	VersionHandler struct {
-		config Config
+		config bot.Config
 		Name   string
 	}
 )
@@ -24,7 +25,7 @@ func NewVersionHandler(s string) *VersionHandler {
 	return h
 }
 
-func (h *VersionHandler) SetConfig(config Config) {
+func (h *VersionHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 

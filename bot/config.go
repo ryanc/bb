@@ -1,4 +1,4 @@
-package command
+package bot
 
 const (
 	defaultPrefix = "!"
@@ -24,6 +24,10 @@ type (
 	ReactionConfig struct {
 		Emojis   []string
 		Channels []string
+	}
+
+	WeatherConfig struct {
+		Token string `mapstructure:"token"`
 	}
 )
 

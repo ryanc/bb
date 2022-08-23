@@ -12,6 +12,7 @@ import (
 	"strings"
 	"syscall"
 
+	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/command"
 	"git.kill0.net/chill9/beepboop/lib"
 
@@ -22,9 +23,7 @@ import (
 )
 
 var (
-	defaultReactions []string = []string{"👍", "🌶️", "🤣", "😂", "🍆", "🍑", "❤️", "💦", "😍", "💩", "🔥", "🍒", "🎉", "🥳", "🎊"}
-
-	C command.Config
+	C bot.Config
 
 	handlers []command.CommandHandler = []command.CommandHandler{
 		command.NewCoinHandler(),
@@ -53,7 +52,6 @@ func main() {
 
 	lib.SeedMathRand()
 
-	viper.SetDefault("handler.reaction.emojis", defaultReactions)
 	viper.SetEnvPrefix("BEEPBOOP")
 	viper.AutomaticEnv()
 	viper.SetConfigName("config")

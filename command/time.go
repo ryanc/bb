@@ -5,13 +5,14 @@ import (
 	"strings"
 	"time"
 
+	"git.kill0.net/chill9/beepboop/bot"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
 type (
 	TimeHandler struct {
-		config Config
+		config bot.Config
 	}
 )
 
@@ -19,7 +20,7 @@ func NewTimeHandler() *TimeHandler {
 	return new(TimeHandler)
 }
 
-func (h *TimeHandler) SetConfig(config Config) {
+func (h *TimeHandler) SetConfig(config bot.Config) {
 	h.config = config
 }
 

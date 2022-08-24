@@ -5,6 +5,6 @@ import (
 )
 
 type MessageCreateHandler interface {
-	Handle(s *discordgo.Session, m *discordgo.MessageCreate)
-	SetConfig(config Config)
+	Handle(*discordgo.Session, *discordgo.MessageCreate)
+	SetConfig(Config)
 }

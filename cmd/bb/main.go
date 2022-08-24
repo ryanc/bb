@@ -11,8 +11,7 @@ import (
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/bot"
-	handler "git.kill0.net/chill9/beepboop/bot/handlers"
-	"git.kill0.net/chill9/beepboop/command"
+	"git.kill0.net/chill9/beepboop/bot/handler"
 	"git.kill0.net/chill9/beepboop/lib"
 
 	"github.com/bwmarrin/discordgo"
@@ -24,14 +23,14 @@ import (
 var (
 	C bot.Config
 
-	handlers []command.CommandHandler = []command.CommandHandler{
-		command.NewCoinHandler(),
-		command.NewPingHandler(),
-		command.NewRollHandler(),
-		command.NewRouletteHandler(),
-		command.NewTimeHandler(),
-		command.NewVersionHandler("version"),
-		command.NewWeatherHandler(),
+	handlers []bot.MessageCreateHandler = []bot.MessageCreateHandler{
+		handler.NewCoinHandler(),
+		handler.NewPingHandler(),
+		handler.NewRollHandler(),
+		handler.NewRouletteHandler(),
+		handler.NewTimeHandler(),
+		handler.NewVersionHandler("version"),
+		handler.NewWeatherHandler(),
 		handler.NewReactionHandler(),
 	}
 )

@@ -1,4 +1,4 @@
-package command
+package handler
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"git.kill0.net/chill9/beepboop/bot"
+	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 
 	log "github.com/sirupsen/logrus"
@@ -101,14 +102,14 @@ func ParseRoll(roll string) (*Roll, error) {
 
 func (r *Roll) RollDice() {
 	for i := 1; i <= r.N; i++ {
-		roll := RandInt(1, r.D)
+		roll := lib.RandInt(1, r.D)
 		r.Rolls = append(r.Rolls, roll)
 		r.Sum += roll
 	}
 }
 
 func (c *Coin) Flip() bool {
-	*c = Coin(Itob(RandInt(0, 1)))
+	*c = Coin(lib.Itob(lib.RandInt(0, 1)))
 	return bool(*c)
 }
 
@@ -119,7 +120,7 @@ func NewGun() *Gun {
 func (g *Gun) Load(n int) {
 	g.N = 0
 	for i := 1; i <= n; {
-		x := RandInt(0, len(g.C)-1)
+		x := lib.RandInt(0, len(g.C)-1)
 		if g.C[x] == false {
 			g.C[x] = true
 			i++
@@ -191,7 +192,7 @@ func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 	r.RollDice()
 	log.Debugf("rolled dice: %+v", r)
 
-	msg = fmt.Sprintf("🎲 %s = %d", JoinInt(r.Rolls, " + "), r.Sum)
+	msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
 
 	s.ChannelMessageSend(m.ChannelID, msg)
 }

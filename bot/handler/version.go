@@ -1,10 +1,11 @@
-package command
+package handler
 
 import (
 	"fmt"
 	"runtime"
 
 	"git.kill0.net/chill9/beepboop/bot"
+	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -34,7 +35,7 @@ func (h *VersionHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate
 		return
 	}
 
-	if !HasCommand(m.Content, h.config.Prefix, h.Name) {
+	if !lib.HasCommand(m.Content, h.config.Prefix, h.Name) {
 		return
 	}
 

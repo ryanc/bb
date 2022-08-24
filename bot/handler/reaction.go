@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"git.kill0.net/chill9/beepboop/bot"
-	"git.kill0.net/chill9/beepboop/command"
 	"git.kill0.net/chill9/beepboop/lib"
 
 	"github.com/bwmarrin/discordgo"
@@ -14,7 +13,7 @@ import (
 
 type (
 	ReactionHandler struct {
-		config bot.Config
+		Config bot.Config
 	}
 )
 
@@ -23,7 +22,7 @@ func NewReactionHandler() *ReactionHandler {
 }
 
 func (h *ReactionHandler) SetConfig(config bot.Config) {
-	h.config = config
+	h.Config = config
 }
 
 func (h *ReactionHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -31,8 +30,8 @@ func (h *ReactionHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreat
 		return
 	}
 
-	emojis := h.config.Handler.Reaction.Emojis
-	channels := h.config.Handler.Reaction.Channels
+	emojis := h.Config.Handler.Reaction.Emojis
+	channels := h.Config.Handler.Reaction.Channels
 
 	if len(emojis) == 0 {
 		log.Warning("emoji list is empty")
@@ -50,7 +49,7 @@ func (h *ReactionHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreat
 
 	for _, a := range m.Attachments {
 		if strings.HasPrefix(a.ContentType, "image/") {
-			for i := 1; i <= command.RandInt(1, len(emojis)); i++ {
+			for i := 1; i <= lib.RandInt(1, len(emojis)); i++ {
 				r := emojis[rand.Intn(len(emojis))]
 				s.MessageReactionAdd(m.ChannelID, m.ID, r)
 			}
@@ -58,7 +57,7 @@ func (h *ReactionHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 
 	for range m.Embeds {
-		for i := 1; i <= command.RandInt(1, len(emojis)); i++ {
+		for i := 1; i <= lib.RandInt(1, len(emojis)); i++ {
 			r := emojis[rand.Intn(len(emojis))]
 			s.MessageReactionAdd(m.ChannelID, m.ID, r)
 		}

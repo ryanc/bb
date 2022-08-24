@@ -33,3 +33,7 @@ func SeedMathRand() error {
 
 	return err
 }
+
+func RandInt(min int, max int) int {
+	return rand.Intn(max-min+1) + min
+}

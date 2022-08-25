@@ -54,7 +54,7 @@ func main() {
 		dg.AddHandler(h.Handle)
 	}
 
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 
 	err = dg.Open()
 	if err != nil {

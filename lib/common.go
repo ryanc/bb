@@ -59,7 +59,7 @@ func HasCommand(s, prefix, cmd string) bool {
 		return false
 	}
 
-	if s[1:] == cmd {
+	if strings.HasPrefix(s[1:], cmd) {
 		return true
 	}
 

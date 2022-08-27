@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"strings"
-
 	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
@@ -13,6 +11,7 @@ type (
 
 	CoinHandler struct {
 		config bot.Config
+		Name   string
 	}
 )
 
@@ -21,8 +20,10 @@ func (c *Coin) Flip() bool {
 	return bool(*c)
 }
 
-func NewCoinHandler() *CoinHandler {
-	return new(CoinHandler)
+func NewCoinHandler(s string) *CoinHandler {
+	h := new(CoinHandler)
+	h.Name = s
+	return h
 }
 
 func (h *CoinHandler) SetConfig(config bot.Config) {
@@ -39,7 +40,7 @@ func (h *CoinHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if !strings.HasPrefix(m.Content, "!coin") {
+	if !lib.HasCommand(m.Content, h.config.Prefix, h.Name) {
 		return
 	}
 

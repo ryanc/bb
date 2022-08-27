@@ -24,6 +24,7 @@ type (
 
 	RouletteHandler struct {
 		config bot.Config
+		Name   string
 	}
 )
 
@@ -73,8 +74,10 @@ func (g *Gun) IsEmpty() bool {
 	return true
 }
 
-func NewRouletteHandler() *RouletteHandler {
-	return new(RouletteHandler)
+func NewRouletteHandler(s string) *RouletteHandler {
+	h := new(RouletteHandler)
+	h.Name = s
+	return h
 }
 
 func (h *RouletteHandler) SetConfig(config bot.Config) {

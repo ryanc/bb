@@ -24,6 +24,7 @@ var (
 type (
 	WeatherHandler struct {
 		Config bot.Config
+		Name   string
 	}
 
 	Temperature float32
@@ -66,8 +67,10 @@ func (t *Temperature) Celcius() float32 {
 	return float32(*t) - 273.15
 }
 
-func NewWeatherHandler() *WeatherHandler {
-	return new(WeatherHandler)
+func NewWeatherHandler(s string) *WeatherHandler {
+	h := new(WeatherHandler)
+	h.Name = s
+	return h
 }
 
 func (h *WeatherHandler) SetConfig(config bot.Config) {

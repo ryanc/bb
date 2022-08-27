@@ -24,14 +24,15 @@ var (
 	C bot.Config
 
 	handlers []bot.MessageCreateHandler = []bot.MessageCreateHandler{
-		handler.NewCoinHandler(),
-		handler.NewPingHandler(),
-		handler.NewRollHandler(),
-		handler.NewRouletteHandler(),
-		handler.NewTimeHandler(),
+		handler.NewCoinHandler("coin"),
+		handler.NewPingHandler("ping"),
+		handler.NewRollHandler("roll"),
+		handler.NewRouletteHandler("roulette"),
+		handler.NewTimeHandler("time"),
 		handler.NewVersionHandler("version"),
-		handler.NewWeatherHandler(),
+		handler.NewWeatherHandler("weather"),
 		handler.NewReactionHandler(),
+		handler.NewDealHandler("deal"),
 	}
 )
 

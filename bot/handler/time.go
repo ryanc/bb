@@ -13,11 +13,14 @@ import (
 type (
 	TimeHandler struct {
 		config bot.Config
+		Name   string
 	}
 )
 
-func NewTimeHandler() *TimeHandler {
-	return new(TimeHandler)
+func NewTimeHandler(s string) *TimeHandler {
+	h := new(TimeHandler)
+	h.Name = s
+	return h
 }
 
 func (h *TimeHandler) SetConfig(config bot.Config) {

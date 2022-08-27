@@ -28,6 +28,7 @@ type (
 
 	RollHandler struct {
 		config bot.Config
+		Name   string
 	}
 )
 
@@ -83,8 +84,10 @@ func (r *Roll) RollDice() {
 	}
 }
 
-func NewRollHandler() *RollHandler {
-	return new(RollHandler)
+func NewRollHandler(s string) *RollHandler {
+	h := new(RollHandler)
+	h.Name = s
+	return h
 }
 
 func (h *RollHandler) SetConfig(config bot.Config) {
@@ -102,7 +105,7 @@ func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if !strings.HasPrefix(m.Content, "!roll") {
+	if !lib.HasCommand(m.Content, h.config.Prefix, h.Name) {
 		return
 	}
 

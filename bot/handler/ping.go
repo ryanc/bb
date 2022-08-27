@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"strings"
-
 	"git.kill0.net/chill9/beepboop/bot"
+	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
@@ -11,11 +10,14 @@ import (
 type (
 	PingHandler struct {
 		config bot.Config
+		Name   string
 	}
 )
 
-func NewPingHandler() *PingHandler {
-	return new(PingHandler)
+func NewPingHandler(s string) *PingHandler {
+	h := new(PingHandler)
+	h.Name = s
+	return h
 }
 
 func (h *PingHandler) SetConfig(config bot.Config) {
@@ -27,7 +29,7 @@ func (h *PingHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if !strings.HasPrefix(m.Content, "!ping") {
+	if !lib.HasCommand(m.Content, h.config.Prefix, h.Name) {
 		return
 	}
 

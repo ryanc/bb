@@ -2,6 +2,7 @@ package weather
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,7 +23,11 @@ const (
 )
 
 var (
-	EndpointWeather = lib.BuildURI(OpenWeatherMapURI, "/data/2.5/weather")
+	EndpointWeather        = lib.BuildURI(OpenWeatherMapURI, "/data/2.5/weather")
+	ErrUnmarshal           = errors.New("unmarshaling JSON failed")
+	ErrReadingResponse     = errors.New("reading HTTP response failed")
+	ErrRequestFailed       = errors.New("HTTP request failed")
+	ErrCreateRequestFailed = errors.New("failed to create new HTTP request")
 )
 
 func NewClient(token string) *WeatherClient {
@@ -30,13 +35,11 @@ func NewClient(token string) *WeatherClient {
 }
 
 func (c *WeatherClient) Get(loc string) (w Weather, err error) {
-	var (
-		werr WeatherError
-	)
+	var werr WeatherError
 
 	req, err := http.NewRequest("GET", EndpointWeather, nil)
 	if err != nil {
-		err = fmt.Errorf("failed to create new request: %s", err)
+		err = fmt.Errorf("%s: %s", ErrCreateRequestFailed, err)
 		return
 	}
 
@@ -47,22 +50,22 @@ func (c *WeatherClient) Get(loc string) (w Weather, err error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		err = fmt.Errorf("HTTP request failed: %s", err)
+		err = fmt.Errorf("%s: %s", ErrRequestFailed, err)
 		return
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = fmt.Errorf("reading HTTP response failed: %s", err)
+		err = fmt.Errorf("%s: %s", ErrReadingResponse, err)
 		return
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		err = json.Unmarshal(body, &werr)
 		if err != nil {
 			log.Debugf("%s", body)
-			err = fmt.Errorf("unmarshaling JSON failed: %s", err)
+			err = fmt.Errorf("%s: %s", ErrUnmarshal, err)
 			return
 		}
 
@@ -73,7 +76,7 @@ func (c *WeatherClient) Get(loc string) (w Weather, err error) {
 	err = json.Unmarshal(body, &w)
 	if err != nil {
 		log.Debugf("%s", body)
-		log.Errorf("unmarshaling JSON failed: %s", err)
+		err = fmt.Errorf("%s: %s", ErrUnmarshal, err)
 		return
 	}
 

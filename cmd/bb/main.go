@@ -83,10 +83,6 @@ func setupConfig() {
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
 
-	if viper.GetBool("debug") {
-		log.SetLevel(log.DebugLevel)
-	}
-
 	viper.SetEnvPrefix("BEEPBOOP")
 	viper.AutomaticEnv()
 
@@ -96,6 +92,7 @@ func setupConfig() {
 
 	err = viper.ReadInConfig()
 
+	viper.BindEnv("DEBUG")
 	viper.BindEnv("DISCORD_TOKEN")
 	viper.BindEnv("OPEN_WEATHER_MAP_TOKEN")
 
@@ -106,5 +103,9 @@ func setupConfig() {
 	err = viper.Unmarshal(&C)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
+	}
+
+	if viper.GetBool("debug") {
+		log.SetLevel(log.DebugLevel)
 	}
 }

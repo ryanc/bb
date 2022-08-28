@@ -10,6 +10,7 @@ var (
 
 type (
 	Config struct {
+		Debug               bool          `mapstructure:"debug"`
 		Handler             HandlerConfig `mapstructure:"handler"`
 		Prefix              string        `mapstructure:"prefix"`
 		DiscordToken        string        `mapstructure:"discord_token"`

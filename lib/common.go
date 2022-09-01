@@ -68,3 +68,21 @@ func HasCommand(s, prefix, cmd string) bool {
 
 	return false
 }
+
+func SplitCommandAndArgs(s, prefix string) (cmd string, args []string) {
+	s = strings.TrimSpace(s)
+
+	x := strings.Split(s, " ")
+
+	if len(x) > 1 {
+		args = x[1:]
+	}
+
+	cmd = x[0]
+
+	if strings.Index(s, prefix) == 0 {
+		cmd = cmd[len(prefix):]
+	}
+
+	return cmd, args
+}

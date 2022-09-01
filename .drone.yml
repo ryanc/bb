@@ -3,7 +3,7 @@ type: docker
 name: default
 
 steps:
-  - name: greeting
+  - name: build
     image: golang
     commands:
       - go build ./cmd/bb

@@ -5,3 +5,4 @@ services:
     environment:
       - BEEPBOOP_DISCORD_TOKEN
       - BEEPBOOP_OPEN_WEATHER_MAP_TOKEN
+      - BEEPBOOP_DEBUG=true

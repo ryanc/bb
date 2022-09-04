@@ -53,6 +53,9 @@ func BuildURI(rawuri, rawpath string) string {
 func HasCommand(s, prefix, cmd string) bool {
 	s = strings.TrimSpace(s)
 
+	args := strings.Split(s, " ")
+	s = args[0]
+
 	// a command cannot be less than two characters e.g. !x
 	if len(s) < 2 {
 		return false

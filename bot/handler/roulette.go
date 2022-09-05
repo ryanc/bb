@@ -75,9 +75,7 @@ func (g *Gun) IsEmpty() bool {
 }
 
 func NewRouletteHandler(s string) *RouletteHandler {
-	h := new(RouletteHandler)
-	h.Name = s
-	return h
+	return &RouletteHandler{Name: s}
 }
 
 func (h *RouletteHandler) SetConfig(config bot.Config) {

@@ -85,9 +85,7 @@ func (r *Roll) RollDice() {
 }
 
 func NewRollHandler(s string) *RollHandler {
-	h := new(RollHandler)
-	h.Name = s
-	return h
+	return &RollHandler{Name: s}
 }
 
 func (h *RollHandler) SetConfig(config bot.Config) {

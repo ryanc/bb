@@ -21,9 +21,7 @@ func (c *Coin) Flip() bool {
 }
 
 func NewCoinHandler(s string) *CoinHandler {
-	h := new(CoinHandler)
-	h.Name = s
-	return h
+	return &CoinHandler{Name: s}
 }
 
 func (h *CoinHandler) SetConfig(config bot.Config) {

@@ -21,9 +21,7 @@ type (
 )
 
 func NewVersionHandler(s string) *VersionHandler {
-	h := new(VersionHandler)
-	h.Name = s
-	return h
+	return &VersionHandler{Name: s}
 }
 
 func (h *VersionHandler) SetConfig(config bot.Config) {

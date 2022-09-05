@@ -17,9 +17,7 @@ type WeatherHandler struct {
 }
 
 func NewWeatherHandler(s string) *WeatherHandler {
-	h := new(WeatherHandler)
-	h.Name = s
-	return h
+	return &WeatherHandler{Name: s}
 }
 
 func (h *WeatherHandler) SetConfig(config bot.Config) {

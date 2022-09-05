@@ -18,9 +18,7 @@ type (
 )
 
 func NewTimeHandler(s string) *TimeHandler {
-	h := new(TimeHandler)
-	h.Name = s
-	return h
+	return &TimeHandler{Name: s}
 }
 
 func (h *TimeHandler) SetConfig(config bot.Config) {

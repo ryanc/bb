@@ -15,9 +15,7 @@ type (
 )
 
 func NewPingHandler(s string) *PingHandler {
-	h := new(PingHandler)
-	h.Name = s
-	return h
+	return &PingHandler{Name: s}
 }
 
 func (h *PingHandler) SetConfig(config bot.Config) {

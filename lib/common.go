@@ -50,6 +50,33 @@ func BuildURI(rawuri, rawpath string) string {
 	return u.String()
 }
 
+func HasCommand(s, prefix string) bool {
+	s = strings.TrimSpace(s)
+
+	if len(s) == 0 || len(prefix) == 0 {
+		return false
+	}
+
+	if !strings.HasPrefix(s, prefix) {
+		return false
+	}
+
+	// remove the command prefix
+	s = s[len(prefix):]
+
+	// multiple assignment trick
+	cmd, _ := func() (string, string) {
+		x := strings.SplitN(s, " ", 2)
+		if len(x) > 1 {
+			return x[0], x[1]
+		}
+
+		return x[0], ""
+	}()
+
+	return len(cmd) > 0
+}
+
 func ContainsCommand(s, prefix, cmd string) bool {
 	s = strings.TrimSpace(s)
 

@@ -1,6 +1,9 @@
 package lib
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestContainsCommand(t *testing.T) {
 	tables := []struct {

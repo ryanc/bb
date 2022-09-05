@@ -53,3 +53,26 @@ func TestHasCommandCommand(t *testing.T) {
 		}
 	}
 }
+
+func TestSplitComandAndArgs(t *testing.T) {
+	tables := []struct {
+		s        string
+		prefix   string
+		wantCmd  string
+		wantArgs []string
+	}{
+		{"!command x y", "!", "command", []string{"x", "y"}},
+		{"!command", "!", "command", []string(nil)},
+		{"hey man", "!", "", []string(nil)},
+	}
+
+	for _, table := range tables {
+		gotCmd, gotArgs := SplitCommandAndArgs(table.s, table.prefix)
+		if gotCmd != table.wantCmd {
+			t.Errorf("got: %s, want: %s", gotCmd, table.wantCmd)
+		}
+		if !reflect.DeepEqual(gotArgs, table.wantArgs) {
+			t.Errorf("got: %+v, want: %+v", gotArgs, table.wantArgs)
+		}
+	}
+}

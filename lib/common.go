@@ -102,6 +102,10 @@ func ContainsCommand(s, prefix, cmd string) bool {
 func SplitCommandAndArgs(s, prefix string) (cmd string, args []string) {
 	s = strings.TrimSpace(s)
 
+	if !strings.HasPrefix(s, prefix) {
+		return
+	}
+
 	x := strings.Split(s, " ")
 
 	if len(x) > 1 {

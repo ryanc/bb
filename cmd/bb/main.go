@@ -55,6 +55,8 @@ func main() {
 		dg.AddHandler(h.Handle)
 	}
 
+	dg.AddHandler(bot.NewCommandHandler(C))
+
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 
 	err = dg.Open()

@@ -50,7 +50,7 @@ func BuildURI(rawuri, rawpath string) string {
 	return u.String()
 }
 
-func HasCommand(s, prefix, cmd string) bool {
+func ContainsCommand(s, prefix, cmd string) bool {
 	s = strings.TrimSpace(s)
 
 	args := strings.Split(s, " ")

@@ -2,7 +2,7 @@ package lib
 
 import "testing"
 
-func TestHasCommand(t *testing.T) {
+func TestContainsCommand(t *testing.T) {
 	tables := []struct {
 		s      string
 		prefix string
@@ -18,9 +18,9 @@ func TestHasCommand(t *testing.T) {
 	}
 
 	for _, table := range tables {
-		r := HasCommand(table.s, table.prefix, table.cmd)
+		r := ContainsCommand(table.s, table.prefix, table.cmd)
 		if r != table.r {
-			t.Errorf("HasCommand(%q, %q, %q), got: %t, want: %t",
+			t.Errorf("ContainsCommand(%q, %q, %q), got: %t, want: %t",
 				table.s, table.prefix, table.cmd, r, table.r,
 			)
 		}

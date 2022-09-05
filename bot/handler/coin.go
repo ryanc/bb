@@ -38,7 +38,7 @@ func (h *CoinHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if !lib.HasCommand(m.Content, h.config.Prefix, h.Name) {
+	if !lib.ContainsCommand(m.Content, h.config.Prefix, h.Name) {
 		return
 	}
 

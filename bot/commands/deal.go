@@ -1,4 +1,4 @@
-package handler
+package commands
 
 import (
 	"errors"
@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"git.kill0.net/chill9/beepboop/bot"
-	"git.kill0.net/chill9/beepboop/lib"
-	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -52,36 +50,16 @@ func (d *Deck) Deal(n int) ([]Card, error) {
 	return hand, err
 }
 
-func NewDealHandler(s string) *DealHandler {
-	h := new(DealHandler)
-	h.Name = s
-	return h
-}
-
-func (h *DealHandler) SetConfig(config bot.Config) {
-	h.config = config
-}
-
-func (h *DealHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	if !lib.ContainsCommand(m.Content, h.config.Prefix, h.Name) {
-		return
-	}
-
+func DealCommand(cmd *bot.Command, args []string) error {
 	rand.Shuffle(len(deck), func(i, j int) {
 		deck[i], deck[j] = deck[j], deck[i]
 	})
 
 	log.Debugf("%+v", deck)
 
-	_, args := lib.SplitCommandAndArgs(m.Content, h.config.Prefix)
-
 	if len(args) != 1 {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("help: `!%s <n>`", h.Name))
-		return
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, fmt.Sprintf("help: `!%s <n>`", cmd.Name))
+		return nil
 	}
 
 	n, err := strconv.Atoi(args[0])
@@ -91,11 +69,12 @@ func (h *DealHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	hand, err := deck.Deal(n)
 	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("error: %s\n", err))
-		return
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, fmt.Sprintf("error: %s\n", err))
+		return nil
 	}
 
-	s.ChannelMessageSend(m.ChannelID, JoinCards(hand, " "))
+	cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, JoinCards(hand, " "))
+	return nil
 }
 
 func JoinCards(h []Card, sep string) string {

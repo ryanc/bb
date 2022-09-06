@@ -21,6 +21,7 @@ type (
 		Name    string
 		Config  Config
 		Func    func(cmd *Command, args []string) error
+		NArgs   int
 		Session *discordgo.Session
 		Message *discordgo.MessageCreate
 	}
@@ -66,22 +67,25 @@ func NewCommandHandler(config Config) func(s *discordgo.Session, m *discordgo.Me
 			return
 		}
 
-		cmdName, args := lib.SplitCommandAndArgs(m.Content, config.Prefix)
+		cmdName, arg := lib.SplitCommandAndArg(m.Content, config.Prefix)
 
 		cmd, ok := GetCommand(cmdName)
+
+		args := lib.SplitArgs(arg, cmd.NArgs)
+
 		if ok {
 			cmd.Config = config
 			cmd.Name = cmdName
 			cmd.Session = s
 			cmd.Message = m
 
-			log.Debugf("command: %+v, args: %+v", cmd.Name, args)
+			log.Debugf("command: %v, args: %v, nargs: %d", cmd.Name, args, len(args))
 			cmd.Func(cmd, args)
 
 			return
 		}
 
-		log.Warnf("unknown command: %+v, args: %+v", cmdName, args)
+		log.Warnf("unknown command: %v, args: %v, nargs: %d", cmdName, args, len(args))
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("unknown command: %s", cmdName))
 	}
 }

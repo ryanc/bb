@@ -35,28 +35,32 @@ func init() {
 		Func: commands.CoinCommand,
 	})
 	bot.AddCommand(&bot.Command{
-		Name: "deal",
-		Func: commands.DealCommand,
+		Name:  "deal",
+		Func:  commands.DealCommand,
+		NArgs: 1,
 	})
 	bot.AddCommand(&bot.Command{
 		Name: "ping",
 		Func: commands.PingCommand,
 	})
 	bot.AddCommand(&bot.Command{
-		Name: "roll",
-		Func: commands.RollCommand,
+		Name:  "roll",
+		Func:  commands.RollCommand,
+		NArgs: 1,
 	})
 	bot.AddCommand(&bot.Command{
-		Name: "time",
-		Func: commands.TimeCommand,
+		Name:  "time",
+		Func:  commands.TimeCommand,
+		NArgs: 1,
 	})
 	bot.AddCommand(&bot.Command{
 		Name: "version",
 		Func: commands.VersionCommand,
 	})
 	bot.AddCommand(&bot.Command{
-		Name: "weather",
-		Func: commands.WeatherCommand,
+		Name:  "weather",
+		Func:  commands.WeatherCommand,
+		NArgs: 1,
 	})
 }
 

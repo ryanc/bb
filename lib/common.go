@@ -99,24 +99,43 @@ func ContainsCommand(s, prefix, cmd string) bool {
 	return false
 }
 
-func SplitCommandAndArg(s, prefix string) (cmd string, args []string) {
+func SplitCommandAndArg(s, prefix string) (cmd string, arg string) {
 	s = strings.TrimSpace(s)
 
 	if !strings.HasPrefix(s, prefix) {
 		return
 	}
 
-	x := strings.Split(s, " ")
+	// remove the command prefix
+	s = s[len(prefix):]
 
-	if len(x) > 1 {
-		args = x[1:]
+	// multiple assignment trick
+	cmd, arg = func() (string, string) {
+		x := strings.SplitN(s, " ", 2)
+		if len(x) > 1 {
+			return x[0], x[1]
+		}
+		return x[0], ""
+	}()
+
+	return cmd, arg
+}
+
+func SplitCommandAndArgs(s, prefix string, n int) (cmd string, args []string) {
+	cmd, arg := SplitCommandAndArg(s, prefix)
+
+	if n == 0 {
+		return cmd, strings.Split(arg, " ")
 	}
 
-	cmd = x[0]
+	return cmd, strings.SplitN(arg, " ", n)
+}
 
-	if strings.Index(s, prefix) == 0 {
-		cmd = cmd[len(prefix):]
+func SplitArgs(s string, n int) (args []string) {
+	if n > 0 {
+		args = strings.SplitN(s, " ", n)
+	} else {
+		args = strings.Split(s, " ")
 	}
-
-	return cmd, args
+	return
 }

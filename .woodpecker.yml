@@ -1,9 +1,9 @@
 ---
 pipeline:
-  lint:
-    image: golangci/golangci-lint
-    commands:
-      - golangci-lint run
+  #lint:
+  #  image: golangci/golangci-lint
+  #  commands:
+  #    - golangci-lint run
   build:
     image: golang
     commands:

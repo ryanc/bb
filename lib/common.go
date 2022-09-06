@@ -99,7 +99,7 @@ func ContainsCommand(s, prefix, cmd string) bool {
 	return false
 }
 
-func SplitCommandAndArgs(s, prefix string) (cmd string, args []string) {
+func SplitCommandAndArg(s, prefix string) (cmd string, args []string) {
 	s = strings.TrimSpace(s)
 
 	if !strings.HasPrefix(s, prefix) {

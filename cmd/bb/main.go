@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/bot"
+	"git.kill0.net/chill9/beepboop/bot/commands"
 	"git.kill0.net/chill9/beepboop/bot/handler"
 	"git.kill0.net/chill9/beepboop/lib"
 
@@ -24,17 +25,40 @@ var (
 	C bot.Config
 
 	handlers []bot.MessageCreateHandler = []bot.MessageCreateHandler{
-		handler.NewCoinHandler("coin"),
-		handler.NewPingHandler("ping"),
-		handler.NewRollHandler("roll"),
-		handler.NewRouletteHandler("roulette"),
-		handler.NewTimeHandler("time"),
-		handler.NewVersionHandler("version"),
-		handler.NewWeatherHandler("weather"),
 		handler.NewReactionHandler(),
-		handler.NewDealHandler("deal"),
 	}
 )
+
+func init() {
+	bot.AddCommand(&bot.Command{
+		Name: "coin",
+		Func: commands.CoinCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "deal",
+		Func: commands.DealCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "ping",
+		Func: commands.PingCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "roll",
+		Func: commands.RollCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "time",
+		Func: commands.TimeCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "version",
+		Func: commands.VersionCommand,
+	})
+	bot.AddCommand(&bot.Command{
+		Name: "weather",
+		Func: commands.WeatherCommand,
+	})
+}
 
 func main() {
 	setupConfig()

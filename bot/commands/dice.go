@@ -1,4 +1,4 @@
-package handler
+package commands
 
 import (
 	"errors"
@@ -9,7 +9,6 @@ import (
 
 	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
-	"github.com/bwmarrin/discordgo"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,11 +23,6 @@ type (
 		N, D, Sum int
 		Rolls     []int
 		S         string
-	}
-
-	RollHandler struct {
-		config bot.Config
-		Name   string
 	}
 )
 
@@ -84,42 +78,19 @@ func (r *Roll) RollDice() {
 	}
 }
 
-func NewRollHandler(s string) *RollHandler {
-	return &RollHandler{Name: s}
-}
-
-func (h *RollHandler) SetConfig(config bot.Config) {
-	h.config = config
-}
-
-func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
+func RollCommand(cmd *bot.Command, args []string) error {
 	var (
 		err       error
 		msg, roll string
 		r         *Roll
 	)
 
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	if !lib.ContainsCommand(m.Content, h.config.Prefix, h.Name) {
-		return
-	}
-
-	x := strings.Split(m.Content, " ")
-
-	if len(x) != 2 {
-		s.ChannelMessageSend(m.ChannelID, "help: `!roll <n>d<s>`")
-		return
-	}
-
-	roll = x[1]
+	roll = args[0]
 
 	r, err = ParseRoll(roll)
 	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, err.Error())
-		return
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, err.Error())
+		return nil
 	}
 
 	r.RollDice()
@@ -127,5 +98,6 @@ func (h *RollHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
 
-	s.ChannelMessageSend(m.ChannelID, msg)
+	cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, msg)
+	return nil
 }

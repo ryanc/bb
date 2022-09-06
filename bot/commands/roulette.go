@@ -1,11 +1,8 @@
-package handler
+package commands
 
 import (
-	"strings"
-
 	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
-	"github.com/bwmarrin/discordgo"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -20,11 +17,6 @@ type (
 	Gun struct {
 		C [6]bool
 		N int
-	}
-
-	RouletteHandler struct {
-		config bot.Config
-		Name   string
 	}
 )
 
@@ -74,23 +66,7 @@ func (g *Gun) IsEmpty() bool {
 	return true
 }
 
-func NewRouletteHandler(s string) *RouletteHandler {
-	return &RouletteHandler{Name: s}
-}
-
-func (h *RouletteHandler) SetConfig(config bot.Config) {
-	h.config = config
-}
-
-func (h *RouletteHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	if !strings.HasPrefix(m.Content, "!roulette") {
-		return
-	}
-
+func RouletteCommand(cmd *bot.Command, args []string) error {
 	if gun.IsEmpty() {
 		gun.Load(Bullets)
 		log.Debugf("reloading gun: %+v\n", gun)
@@ -98,8 +74,9 @@ func (h *RouletteHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreat
 
 	log.Debugf("firing gun: %+v\n", gun)
 	if gun.Fire() {
-		s.ChannelMessageSend(m.ChannelID, GunFireMessage)
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, GunFireMessage)
 	} else {
-		s.ChannelMessageSend(m.ChannelID, GunClickMessage)
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, GunClickMessage)
 	}
+	return nil
 }

@@ -1,12 +1,10 @@
-package handler
+package commands
 
 import (
 	"fmt"
-	"strings"
 
 	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib/weather"
-	"github.com/bwmarrin/discordgo"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,48 +22,38 @@ func (h *WeatherHandler) SetConfig(config bot.Config) {
 	h.Config = config
 }
 
-func (h *WeatherHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate) {
+func WeatherCommand(cmd *bot.Command, args []string) error {
 	var (
 		err error
 		loc string
 		w   weather.Weather
 	)
 
-	if m.Author.ID == s.State.User.ID {
-		return
+	if len(args) != 1 {
+		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, "help: `!weather <CITY>,<STATE>,<COUNTRY>`")
+		return nil
 	}
 
-	if !strings.HasPrefix(m.Content, "!weather") {
-		return
-	}
+	loc = args[0]
 
-	x := strings.SplitN(m.Content, " ", 2)
-
-	if len(x) != 2 {
-		s.ChannelMessageSend(m.ChannelID, "help: `!weather <CITY>,<STATE>,<COUNTRY>`")
-		return
-	}
-
-	loc = x[1]
-
-	if h.Config.OpenWeatherMapToken == "" {
+	if cmd.Config.OpenWeatherMapToken == "" {
 		log.Error("OpenWeather token is not set")
-		return
+		return nil
 	}
 
-	wc := weather.NewClient(h.Config.OpenWeatherMapToken)
+	wc := weather.NewClient(cmd.Config.OpenWeatherMapToken)
 
 	log.Debugf("weather requested for '%s'", loc)
 
 	w, err = wc.Get(loc)
 	if err != nil {
 		log.Errorf("weather client error: %v", err)
-		return
+		return nil
 	}
 
 	log.Debugf("weather returned for '%s': %+v", loc, w)
 
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+	cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, fmt.Sprintf(
 		"%s (%.1f, %.1f) — C:%.1f F:%.1f K:%.1f",
 		loc,
 		w.Coord.Lat,
@@ -74,4 +62,6 @@ func (h *WeatherHandler) Handle(s *discordgo.Session, m *discordgo.MessageCreate
 		w.Main.Temp.Fahrenheit(),
 		w.Main.Temp.Kelvin(),
 	))
+
+	return nil
 }

@@ -1,10 +1,9 @@
-package handler
+package bot
 
 import (
 	"math/rand"
 	"strings"
 
-	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
 
 	"github.com/bwmarrin/discordgo"
@@ -13,7 +12,7 @@ import (
 
 type (
 	ReactionHandler struct {
-		Config bot.Config
+		Config Config
 	}
 )
 
@@ -21,7 +20,7 @@ func NewReactionHandler() *ReactionHandler {
 	return new(ReactionHandler)
 }
 
-func (h *ReactionHandler) SetConfig(config bot.Config) {
+func (h *ReactionHandler) SetConfig(config Config) {
 	h.Config = config
 }
 

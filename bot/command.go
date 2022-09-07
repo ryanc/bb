@@ -55,7 +55,7 @@ func GetCommand(name string) (*Command, bool) {
 	return cmd, ok
 }
 
-func NewCommandHandler(bot *Bot) func(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (b *Bot) CommandHandler() func(*discordgo.Session, *discordgo.MessageCreate) {
 	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		var cmd *Command
 
@@ -63,18 +63,18 @@ func NewCommandHandler(bot *Bot) func(s *discordgo.Session, m *discordgo.Message
 			return
 		}
 
-		if !lib.HasCommand(m.Content, bot.Config.Prefix) {
+		if !lib.HasCommand(m.Content, b.Config.Prefix) {
 			return
 		}
 
-		cmdName, arg := lib.SplitCommandAndArg(m.Content, bot.Config.Prefix)
+		cmdName, arg := lib.SplitCommandAndArg(m.Content, b.Config.Prefix)
 
 		cmd, ok := GetCommand(cmdName)
 
 		args := lib.SplitArgs(arg, cmd.NArgs)
 
 		if ok {
-			cmd.Config = bot.Config
+			cmd.Config = b.Config
 
 			log.Debugf("command: %v, args: %v, nargs: %d", cmd.Name, args, len(args))
 			cmd.Func(args, m)

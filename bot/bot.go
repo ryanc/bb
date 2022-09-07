@@ -14,18 +14,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	C Config
+var C Config
 
-	handlers []MessageCreateHandler = []MessageCreateHandler{
-		NewReactionHandler(),
+type (
+	Bot struct {
+		Session *discordgo.Session
+		Config  Config
 	}
-)
 
-type Bot struct {
-	Session *discordgo.Session
-	Config  Config
-}
+	MessageHandler func(s *discordgo.Session, m *discordgo.MessageCreate)
+)
 
 func NewBot(s *discordgo.Session, config Config) *Bot {
 	return &Bot{Session: s, Config: config}
@@ -66,6 +64,11 @@ func (b *Bot) RegisterCommands() {
 	})
 }
 
+func (b *Bot) RegisterHandlers() {
+	b.Session.AddHandler(b.CommandHandler())
+	b.Session.AddHandler(b.ReactionHandler())
+}
+
 func Run() error {
 	setupConfig()
 
@@ -80,15 +83,9 @@ func Run() error {
 		log.Fatalf("error creating Discord session: %v\n", err)
 	}
 
-	for _, h := range handlers {
-		h.SetConfig(C)
-		dg.AddHandler(h.Handle)
-	}
-
 	b := NewBot(dg, C)
+	b.RegisterHandlers()
 	b.RegisterCommands()
-
-	dg.AddHandler(NewCommandHandler(b))
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 

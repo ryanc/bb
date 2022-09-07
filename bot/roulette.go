@@ -1,9 +1,9 @@
-package commands
+package bot
 
 import (
-	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
 
+	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -66,17 +66,19 @@ func (g *Gun) IsEmpty() bool {
 	return true
 }
 
-func RouletteCommand(cmd *bot.Command, args []string) error {
-	if gun.IsEmpty() {
-		gun.Load(Bullets)
-		log.Debugf("reloading gun: %+v\n", gun)
-	}
+func (b *Bot) RouletteCommand() CommandFunc {
+	return func(args []string, m *discordgo.MessageCreate) error {
+		if gun.IsEmpty() {
+			gun.Load(Bullets)
+			log.Debugf("reloading gun: %+v\n", gun)
+		}
 
-	log.Debugf("firing gun: %+v\n", gun)
-	if gun.Fire() {
-		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, GunFireMessage)
-	} else {
-		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, GunClickMessage)
+		log.Debugf("firing gun: %+v\n", gun)
+		if gun.Fire() {
+			b.Session.ChannelMessageSend(m.ChannelID, GunFireMessage)
+		} else {
+			b.Session.ChannelMessageSend(m.ChannelID, GunClickMessage)
+		}
+		return nil
 	}
-	return nil
 }

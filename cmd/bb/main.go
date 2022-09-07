@@ -11,7 +11,6 @@ import (
 	"syscall"
 
 	"git.kill0.net/chill9/beepboop/bot"
-	"git.kill0.net/chill9/beepboop/bot/commands"
 	"git.kill0.net/chill9/beepboop/bot/handler"
 	"git.kill0.net/chill9/beepboop/lib"
 
@@ -28,41 +27,6 @@ var (
 		handler.NewReactionHandler(),
 	}
 )
-
-func init() {
-	bot.AddCommand(&bot.Command{
-		Name: "coin",
-		Func: commands.CoinCommand,
-	})
-	bot.AddCommand(&bot.Command{
-		Name:  "deal",
-		Func:  commands.DealCommand,
-		NArgs: 1,
-	})
-	bot.AddCommand(&bot.Command{
-		Name: "ping",
-		Func: commands.PingCommand,
-	})
-	bot.AddCommand(&bot.Command{
-		Name:  "roll",
-		Func:  commands.RollCommand,
-		NArgs: 1,
-	})
-	bot.AddCommand(&bot.Command{
-		Name:  "time",
-		Func:  commands.TimeCommand,
-		NArgs: 1,
-	})
-	bot.AddCommand(&bot.Command{
-		Name: "version",
-		Func: commands.VersionCommand,
-	})
-	bot.AddCommand(&bot.Command{
-		Name:  "weather",
-		Func:  commands.WeatherCommand,
-		NArgs: 1,
-	})
-}
 
 func main() {
 	setupConfig()
@@ -83,7 +47,10 @@ func main() {
 		dg.AddHandler(h.Handle)
 	}
 
-	dg.AddHandler(bot.NewCommandHandler(C))
+	b := bot.NewBot(dg, C)
+	b.RegisterCommands()
+
+	dg.AddHandler(bot.NewCommandHandler(b))
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 

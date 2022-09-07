@@ -1,4 +1,4 @@
-package commands
+package bot
 
 import (
 	"errors"
@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"git.kill0.net/chill9/beepboop/bot"
 	"git.kill0.net/chill9/beepboop/lib"
 
+	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -78,26 +78,28 @@ func (r *Roll) RollDice() {
 	}
 }
 
-func RollCommand(cmd *bot.Command, args []string) error {
-	var (
-		err       error
-		msg, roll string
-		r         *Roll
-	)
+func (b *Bot) RollCommand() CommandFunc {
+	return func(args []string, m *discordgo.MessageCreate) error {
+		var (
+			err       error
+			msg, roll string
+			r         *Roll
+		)
 
-	roll = args[0]
+		roll = args[0]
 
-	r, err = ParseRoll(roll)
-	if err != nil {
-		cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, err.Error())
+		r, err = ParseRoll(roll)
+		if err != nil {
+			b.Session.ChannelMessageSend(m.ChannelID, err.Error())
+			return nil
+		}
+
+		r.RollDice()
+		log.Debugf("rolled dice: %+v", r)
+
+		msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
+
+		b.Session.ChannelMessageSend(m.ChannelID, msg)
 		return nil
 	}
-
-	r.RollDice()
-	log.Debugf("rolled dice: %+v", r)
-
-	msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
-
-	cmd.Session.ChannelMessageSend(cmd.Message.ChannelID, msg)
-	return nil
 }

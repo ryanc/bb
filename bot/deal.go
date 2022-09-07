@@ -75,9 +75,7 @@ func (b *Bot) DealCommand() CommandFunc {
 }
 
 func JoinCards(h []Card, sep string) string {
-	var b []string
-
-	b = make([]string, len(h))
+	b := make([]string, len(h))
 
 	for i, v := range h {
 		b[i] = string(v)

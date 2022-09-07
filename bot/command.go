@@ -77,7 +77,9 @@ func (b *Bot) CommandHandler() func(*discordgo.Session, *discordgo.MessageCreate
 			cmd.Config = b.Config
 
 			log.Debugf("command: %v, args: %v, nargs: %d", cmd.Name, args, len(args))
-			cmd.Func(args, m)
+			if err := cmd.Func(args, m); err != nil {
+				log.Errorf("failed to execute command: %s", err)
+			}
 
 			return
 		}

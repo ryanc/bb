@@ -72,7 +72,9 @@ func (b *Bot) RegisterHandlers() {
 func Run() error {
 	setupConfig()
 
-	lib.SeedMathRand()
+	if err := lib.SeedMathRand(); err != nil {
+		log.Warn(err)
+	}
 
 	if C.DiscordToken == "" {
 		log.Fatalf("Discord token is not set")
@@ -99,7 +101,7 @@ func Run() error {
 	defer dg.Close()
 
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
 	<-sc
 
 	log.Info("Shutting down")

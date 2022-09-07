@@ -17,9 +17,7 @@ func Contains[T comparable](s []T, v T) bool {
 }
 
 func JoinInt(a []int, sep string) string {
-	var b []string
-
-	b = make([]string, len(a))
+	b := make([]string, len(a))
 
 	for i, v := range a {
 		b[i] = strconv.Itoa(v)
@@ -37,11 +35,7 @@ func SumInt(a []int) int {
 }
 
 func Itob(v int) bool {
-	if v == 1 {
-		return true
-	}
-
-	return false
+	return v == 1
 }
 
 func BuildURI(rawuri, rawpath string) string {

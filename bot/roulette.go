@@ -36,7 +36,7 @@ func (g *Gun) Load(n int) {
 	g.N = 0
 	for i := 1; i <= n; {
 		x := lib.RandInt(0, len(g.C)-1)
-		if g.C[x] == false {
+		if !g.C[x] {
 			g.C[x] = true
 			i++
 		} else {
@@ -58,7 +58,7 @@ func (g *Gun) Fire() bool {
 
 func (g *Gun) IsEmpty() bool {
 	for _, v := range g.C {
-		if v == true {
+		if v {
 			return false
 		}
 	}

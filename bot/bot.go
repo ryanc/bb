@@ -116,8 +116,6 @@ func Run() error {
 }
 
 func initConfig() {
-	var err error
-
 	C = NewConfig()
 
 	viper.SetEnvPrefix("BEEPBOOP")
@@ -132,13 +130,17 @@ func initConfig() {
 	viper.BindEnv("DISCORD_TOKEN")
 	viper.BindEnv("OPEN_WEATHER_MAP_TOKEN")
 
+	loadConfig()
+}
+
+func loadConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			log.Fatalf("fatal error config file: %v", err)
 		}
 	}
 
-	err = viper.Unmarshal(&C)
+	err := viper.Unmarshal(&C)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}

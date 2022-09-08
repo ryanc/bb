@@ -76,7 +76,7 @@ func (b *Bot) RegisterHandlers() {
 }
 
 func Run() error {
-	setupConfig()
+	initConfig()
 
 	if err := lib.SeedMathRand(); err != nil {
 		log.Warn(err)
@@ -115,7 +115,7 @@ func Run() error {
 	return nil
 }
 
-func setupConfig() {
+func initConfig() {
 	var err error
 
 	C = NewConfig()
@@ -127,7 +127,8 @@ func setupConfig() {
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
 
-	viper.BindEnv("DEBUG")
+	viper.SetDefault("debug", false)
+
 	viper.BindEnv("DISCORD_TOKEN")
 	viper.BindEnv("OPEN_WEATHER_MAP_TOKEN")
 

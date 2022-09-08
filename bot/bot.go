@@ -126,14 +126,14 @@ func setupConfig() {
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(".")
 
-	err = viper.ReadInConfig()
-
 	viper.BindEnv("DEBUG")
 	viper.BindEnv("DISCORD_TOKEN")
 	viper.BindEnv("OPEN_WEATHER_MAP_TOKEN")
 
-	if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-		log.Fatalf("fatal error config file: %v", err)
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Fatalf("fatal error config file: %v", err)
+		}
 	}
 
 	err = viper.Unmarshal(&C)

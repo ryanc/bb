@@ -19,16 +19,11 @@ type (
 
 	HandlerConfig struct {
 		Reaction ReactionConfig `mapstructure:"reaction"`
-		Weather  WeatherConfig  `mapstructure:"weather"`
 	}
 
 	ReactionConfig struct {
 		Emojis   []string
 		Channels []string
-	}
-
-	WeatherConfig struct {
-		Token string `mapstructure:"token"`
 	}
 )
 

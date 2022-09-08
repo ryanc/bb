@@ -77,6 +77,7 @@ func (b *Bot) RegisterHandlers() {
 
 func Run() error {
 	initConfig()
+	go reloadConfig()
 
 	if err := lib.SeedMathRand(); err != nil {
 		log.Warn(err)
@@ -150,5 +151,17 @@ func loadConfig() {
 
 	if viper.GetBool("debug") {
 		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
+	}
+}
+
+func reloadConfig() {
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGHUP)
+	for {
+		<-sc
+
+		loadConfig()
 	}
 }

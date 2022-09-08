@@ -97,8 +97,7 @@ func Run() error {
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 
-	err = dg.Open()
-	if err != nil {
+	if err = dg.Open(); err != nil {
 		log.Fatalf("error opening connection: %v\n", err)
 	}
 

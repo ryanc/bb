@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -24,6 +23,13 @@ type (
 
 	MessageHandler func(s *discordgo.Session, m *discordgo.MessageCreate)
 )
+
+func init() {
+	pflag.Bool("debug", false, "enable debug mode")
+	pflag.Parse()
+
+	viper.BindPFlags(pflag.CommandLine)
+}
 
 func NewBot(s *discordgo.Session, config Config) *Bot {
 	return &Bot{Session: s, Config: config}
@@ -113,11 +119,6 @@ func setupConfig() {
 	var err error
 
 	C = NewConfig()
-
-	flag.Bool("debug", false, "enable debug logging")
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.Parse()
-	viper.BindPFlags(pflag.CommandLine)
 
 	viper.SetEnvPrefix("BEEPBOOP")
 	viper.AutomaticEnv()

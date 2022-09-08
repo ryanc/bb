@@ -139,6 +139,10 @@ func loadConfig() {
 		}
 	}
 
+	log.WithField("filename", viper.ConfigFileUsed()).Info(
+		"loaded configuration file",
+	)
+
 	err := viper.Unmarshal(&C)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)

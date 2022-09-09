@@ -90,8 +90,8 @@ func TestSplitCommandAndArgs(t *testing.T) {
 	}{
 		{"!command x y", "!", 2, "command", []string{"x", "y"}},
 		{"!command x y z", "!", 2, "command", []string{"x", "y z"}},
-		{"!command", "!", 1, "command", []string{""}},
-		{"hey man", "!", 1, "", []string{""}},
+		{"!command", "!", 1, "command", []string{}},
+		{"hey man", "!", 1, "", []string{}},
 	}
 	for _, table := range tables {
 		gotCmd, gotArgs := SplitCommandAndArgs(table.s, table.prefix, table.n)
@@ -99,7 +99,7 @@ func TestSplitCommandAndArgs(t *testing.T) {
 			t.Errorf("got: %s, want: %s", gotCmd, table.wantCmd)
 		}
 		if !reflect.DeepEqual(gotArgs, table.wantArgs) {
-			t.Errorf("got: %+v, want: %+v", gotArgs, table.wantArgs)
+			t.Errorf("got: %#v, want: %#v", gotArgs, table.wantArgs)
 		}
 	}
 }
@@ -115,6 +115,7 @@ func TestSplitArgs(t *testing.T) {
 		{"a b c", 2, []string{"a", "b c"}},
 		{"a b c", 3, []string{"a", "b", "c"}},
 		{"a b c", 4, []string{"a", "b", "c"}},
+		{"", 0, []string{}},
 	}
 	for _, table := range tables {
 		if got, want := SplitArgs(table.s, table.n), table.want; !reflect.DeepEqual(got, want) {

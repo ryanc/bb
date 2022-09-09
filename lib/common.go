@@ -118,6 +118,10 @@ func SplitCommandAndArg(s, prefix string) (cmd string, arg string) {
 func SplitCommandAndArgs(s, prefix string, n int) (cmd string, args []string) {
 	cmd, arg := SplitCommandAndArg(s, prefix)
 
+	if arg == "" {
+		return cmd, []string{}
+	}
+
 	if n == 0 {
 		return cmd, strings.Split(arg, " ")
 	}
@@ -126,6 +130,10 @@ func SplitCommandAndArgs(s, prefix string, n int) (cmd string, args []string) {
 }
 
 func SplitArgs(s string, n int) (args []string) {
+	if s == "" {
+		return []string{}
+	}
+
 	if n > 0 {
 		args = strings.SplitN(s, " ", n)
 	} else {

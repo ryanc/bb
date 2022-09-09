@@ -56,6 +56,11 @@ func (b *Bot) RegisterCommands() {
 		NArgs: 1,
 	})
 	AddCommand(&Command{
+		Name:  "rps",
+		Func:  b.RpsCommand(),
+		NArgs: 1,
+	})
+	AddCommand(&Command{
 		Name:  "time",
 		Func:  b.TimeCommand(),
 		NArgs: 1,

@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -84,12 +85,12 @@ func Run() error {
 	}
 
 	if C.DiscordToken == "" {
-		log.Fatalf("Discord token is not set")
+		return errors.New("discord token not set")
 	}
 
 	dg, err := discordgo.New(fmt.Sprintf("Bot %s", C.DiscordToken))
 	if err != nil {
-		log.Fatalf("error creating Discord session: %v\n", err)
+		return fmt.Errorf("error creating discord session: %v", err)
 	}
 
 	b := NewBot(dg, C)
@@ -99,7 +100,7 @@ func Run() error {
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 
 	if err = dg.Open(); err != nil {
-		log.Fatalf("error opening connection: %v\n", err)
+		return fmt.Errorf("error opening connection: %v", err)
 	}
 
 	log.Info("The bot is now running. Press CTRL-C to exit.")

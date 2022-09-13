@@ -22,6 +22,12 @@ type (
 			H1 float32 `json:"1h"`
 			H3 float32 `json:"3h"`
 		} `json:"rain"`
+
+		Weather []struct {
+			Main        string `json:"main"`
+			Description string `json:"description"`
+			Icon        string `json:"icon"`
+		} `json:"weather"`
 	}
 
 	WeatherError struct {

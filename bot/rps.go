@@ -12,6 +12,8 @@ const (
 	Rock = iota
 	Paper
 	Scissors
+	Lizard
+	Spock
 )
 
 var (

@@ -37,3 +37,15 @@ func SeedMathRand() error {
 func RandInt(min int, max int) int {
 	return rand.Intn(max-min+1) + min
 }
+
+func MapRand[K comparable, V any](m map[K]V) V {
+	n := rand.Intn(len(m))
+	i := 0
+	for _, v := range m {
+		if i == n {
+			return v
+		}
+		i++
+	}
+	panic("unreachable")
+}

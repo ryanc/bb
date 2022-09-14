@@ -123,3 +123,37 @@ func TestSplitArgs(t *testing.T) {
 		}
 	}
 }
+
+func TestMapKeys(t *testing.T) {
+	tables := []struct {
+		m    map[string]int
+		want []string
+	}{
+		{map[string]int{"a": 0, "b": 1, "c": 3}, []string{"a", "b", "c"}},
+	}
+
+	for _, table := range tables {
+		if got, want := MapKeys(table.m), table.want; !reflect.DeepEqual(got, want) {
+			t.Errorf("got: %#v, want: %#v", got, want)
+		}
+	}
+}
+
+func TestMapKey(t *testing.T) {
+	tables := []struct {
+		m    map[string]int
+		n    int
+		want string
+	}{
+		{map[string]int{"a": 0, "b": 1, "c": 2}, 0, "a"},
+		{map[string]int{"a": 0, "b": 1, "c": 2}, 1, "b"},
+		{map[string]int{"a": 0, "b": 1, "c": 2}, 2, "c"},
+		{map[string]int{"a": 0, "b": 1, "c": 2, "d": 0}, 0, "a"},
+	}
+
+	for _, table := range tables {
+		if got, want := MapKey(table.m, table.n), table.want; got != want {
+			t.Errorf("got: %#v, want: %#v", got, want)
+		}
+	}
+}

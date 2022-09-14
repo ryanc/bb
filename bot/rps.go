@@ -2,9 +2,9 @@ package bot
 
 import (
 	"fmt"
-	"math/rand"
 	"strings"
 
+	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -15,10 +15,10 @@ const (
 )
 
 var (
-	rpsVictoryMap map[int]int = map[int]int{
-		Rock:     Scissors,
-		Paper:    Rock,
-		Scissors: Paper,
+	rpsVictoryMap map[int][]int = map[int][]int{
+		Rock:     {Scissors},
+		Paper:    {Rock},
+		Scissors: {Paper},
 	}
 
 	rpsChoiceMap map[string]int = map[string]int{
@@ -34,51 +34,49 @@ var (
 	}
 )
 
-func RpsRand() int {
-	n := rand.Intn(len(rpsVictoryMap))
-	i := 0
-	for _, v := range rpsChoiceMap {
-		if i == n {
-			return v
-		}
-		i++
-	}
-	panic("unreachable")
-}
-
 func (b *Bot) RpsCommand() CommandFunc {
 	return func(args []string, m *discordgo.MessageCreate) error {
 		var (
-			botChoice, playerChoice int
-			botEmoji, playerEmoji   string
-			c                       string
+			bc, pc int
+			be, pe string
+			c      string
 		)
 
 		if len(args) != 1 {
-			b.Session.ChannelMessageSend(m.ChannelID, "help: `!rps (rock | paper | scissors)`")
+			b.Session.ChannelMessageSend(
+				m.ChannelID, "help: `!rps (rock | paper | scissors)`",
+			)
 			return nil
 		}
 
 		c = strings.ToLower(args[0])
 
-		playerChoice, ok := rpsChoiceMap[c]
+		pc, ok := rpsChoiceMap[c] // player's choice
 		if !ok {
-			b.Session.ChannelMessageSend(m.ChannelID, "help: `!rps (rock | paper | scissors)`")
+			b.Session.ChannelMessageSend(
+				m.ChannelID, "help: `!rps (rock | paper | scissors)`",
+			)
 		}
 
-		botChoice = RpsRand()
-		botEmoji = rpsEmojiMap[botChoice]
-		playerEmoji = rpsEmojiMap[playerChoice]
+		bc = lib.MapRand(rpsChoiceMap) // bot's choice
+		pe = rpsEmojiMap[pc]           // player's emoji
+		be = rpsEmojiMap[bc]           // bot's emoji
 
-		if botChoice == playerChoice {
-			b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s v %s: draw", botEmoji, playerEmoji))
+		if bc == pc {
+			b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+				"%s v %s: draw", be, pe,
+			))
 			return nil
-		} else if rpsVictoryMap[botChoice] == playerChoice {
-			b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s v %s: bot wins", botEmoji, playerEmoji))
+		} else if lib.Contains(rpsVictoryMap[bc], pc) {
+			b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+				"%s v %s: %s wins", be, pe, lib.MapKey(rpsChoiceMap, bc),
+			))
 			return nil
 		}
 
-		b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf("%s v %s: you win", botEmoji, playerEmoji))
+		b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf(
+			"%s v %s: %s wins", be, pe, lib.MapKey(rpsChoiceMap, pc),
+		))
 		return nil
 	}
 }

@@ -141,3 +141,21 @@ func SplitArgs(s string, n int) (args []string) {
 	}
 	return
 }
+
+func MapKeys[K comparable, V any](m map[K]V) []K {
+	keys := make([]K, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+func MapKey[K comparable, V comparable](m map[K]V, v V) K {
+	var r K
+	for k := range m {
+		if m[k] == v {
+			return k
+		}
+	}
+	return r
+}

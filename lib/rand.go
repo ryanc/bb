@@ -49,3 +49,9 @@ func MapRand[K comparable, V any](m map[K]V) V {
 	}
 	panic("unreachable")
 }
+
+func MapRandKey[K comparable, V any](m map[K]V) K {
+	keys := MapKeys(m)
+	n := rand.Intn(len(m))
+	return keys[n]
+}

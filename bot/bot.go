@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"git.kill0.net/chill9/beepboop/config"
 	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
@@ -14,12 +15,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var C Config
+var C *config.Config
 
 type (
 	Bot struct {
 		Session *discordgo.Session
-		Config  Config
+		Config  *config.Config
 	}
 
 	MessageHandler func(s *discordgo.Session, m *discordgo.MessageCreate)
@@ -32,7 +33,7 @@ func init() {
 	viper.BindPFlags(pflag.CommandLine)
 }
 
-func NewBot(s *discordgo.Session, config Config) *Bot {
+func NewBot(s *discordgo.Session, config *config.Config) *Bot {
 	return &Bot{Session: s, Config: config}
 }
 
@@ -127,7 +128,7 @@ func Run() error {
 }
 
 func initConfig() {
-	C = NewConfig()
+	C = config.NewConfig()
 
 	viper.SetEnvPrefix("BEEPBOOP")
 	viper.AutomaticEnv()

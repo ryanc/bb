@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 
+	"git.kill0.net/chill9/beepboop/config"
 	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
@@ -19,7 +20,7 @@ type (
 
 	Command struct {
 		Name   string
-		Config Config
+		Config *config.Config
 		Func   CommandFunc
 		NArgs  int
 	}

@@ -1,4 +1,4 @@
-package bot
+package command
 
 import (
 	"git.kill0.net/chill9/beepboop/lib"
@@ -66,19 +66,17 @@ func (g *Gun) IsEmpty() bool {
 	return true
 }
 
-func (b *Bot) RouletteCommand() CommandFunc {
-	return func(args []string, m *discordgo.MessageCreate) error {
-		if gun.IsEmpty() {
-			gun.Load(Bullets)
-			log.Debugf("reloading gun: %+v\n", gun)
-		}
-
-		log.Debugf("firing gun: %+v\n", gun)
-		if gun.Fire() {
-			b.Session.ChannelMessageSend(m.ChannelID, GunFireMessage)
-		} else {
-			b.Session.ChannelMessageSend(m.ChannelID, GunClickMessage)
-		}
-		return nil
+func (h *Handlers) Roulette(args []string, s *discordgo.Session, m *discordgo.MessageCreate) error {
+	if gun.IsEmpty() {
+		gun.Load(Bullets)
+		log.Debugf("reloading gun: %+v\n", gun)
 	}
+
+	log.Debugf("firing gun: %+v\n", gun)
+	if gun.Fire() {
+		s.ChannelMessageSend(m.ChannelID, GunFireMessage)
+	} else {
+		s.ChannelMessageSend(m.ChannelID, GunClickMessage)
+	}
+	return nil
 }

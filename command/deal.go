@@ -1,4 +1,4 @@
-package bot
+package command
 
 import (
 	"errors"
@@ -45,33 +45,31 @@ func (d *Deck) Deal(n int) ([]Card, error) {
 	return hand, err
 }
 
-func (b *Bot) DealCommand() CommandFunc {
-	return func(args []string, m *discordgo.MessageCreate) error {
-		rand.Shuffle(len(deck), func(i, j int) {
-			deck[i], deck[j] = deck[j], deck[i]
-		})
+func (h *Handlers) Deal(args []string, s *discordgo.Session, m *discordgo.MessageCreate) error {
+	rand.Shuffle(len(deck), func(i, j int) {
+		deck[i], deck[j] = deck[j], deck[i]
+	})
 
-		log.Debugf("%+v", deck)
+	log.Debugf("%+v", deck)
 
-		if len(args) != 1 {
-			b.Session.ChannelMessageSend(m.ChannelID, "help: `!deal <n>`")
-			return nil
-		}
-
-		n, err := strconv.Atoi(args[0])
-		if err != nil {
-			log.Errorf("failed to convert string to int: %s", err)
-		}
-
-		hand, err := deck.Deal(n)
-		if err != nil {
-			b.Session.ChannelMessageSend(m.ChannelID, fmt.Sprintf("error: %s\n", err))
-			return nil
-		}
-
-		b.Session.ChannelMessageSend(m.ChannelID, JoinCards(hand, " "))
+	if len(args) != 1 {
+		s.ChannelMessageSend(m.ChannelID, "help: `!deal <n>`")
 		return nil
 	}
+
+	n, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Errorf("failed to convert string to int: %s", err)
+	}
+
+	hand, err := deck.Deal(n)
+	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("error: %s\n", err))
+		return nil
+	}
+
+	s.ChannelMessageSend(m.ChannelID, JoinCards(hand, " "))
+	return nil
 }
 
 func JoinCards(h []Card, sep string) string {

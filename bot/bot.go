@@ -7,7 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"git.kill0.net/chill9/beepboop/command"
 	"git.kill0.net/chill9/beepboop/config"
+	"git.kill0.net/chill9/beepboop/handler"
 	"git.kill0.net/chill9/beepboop/lib"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
@@ -19,9 +21,18 @@ var C *config.Config
 
 type (
 	Bot struct {
-		Session *discordgo.Session
-		Config  *config.Config
+		config   *config.Config
+		session  *discordgo.Session
+		commands map[string]*Command
 	}
+
+	Command struct {
+		Name  string
+		Func  CommandFunc
+		NArgs int
+	}
+
+	CommandFunc func(args []string, s *discordgo.Session, m *discordgo.MessageCreate) error
 
 	MessageHandler func(s *discordgo.Session, m *discordgo.MessageCreate)
 )
@@ -33,58 +44,108 @@ func init() {
 	viper.BindPFlags(pflag.CommandLine)
 }
 
-func NewBot(s *discordgo.Session, config *config.Config) *Bot {
-	return &Bot{Session: s, Config: config}
+func NewBot(config *config.Config, s *discordgo.Session) *Bot {
+	return &Bot{
+		session:  s,
+		commands: make(map[string]*Command),
+	}
 }
 
-func (b *Bot) RegisterCommands() {
-	AddCommand(&Command{
+func (b *Bot) AddHandler(handler interface{}) func() {
+	return b.session.AddHandler(handler)
+}
+
+func (b *Bot) AddCommand(cmd *Command) {
+	b.commands[cmd.Name] = cmd
+}
+
+func (b *Bot) GetCommand(name string) (*Command, bool) {
+	cmd, ok := b.commands[name]
+	return cmd, ok
+}
+
+func (b *Bot) CommandHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	if !lib.HasCommand(m.Content, b.config.Prefix) {
+		return
+	}
+
+	cmdName, arg := lib.SplitCommandAndArg(m.Content, b.config.Prefix)
+
+	cmd, ok := b.GetCommand(cmdName)
+	if !ok {
+		return
+	}
+
+	args := lib.SplitArgs(arg, cmd.NArgs)
+
+	if ok {
+		log.Debugf("command: %v, args: %v, nargs: %d", cmd.Name, args, len(args))
+		if err := cmd.Func(args, s, m); err != nil {
+			log.Errorf("failed to execute command: %s", err)
+		}
+
+		return
+	}
+
+	log.Warnf("unknown command: %v, args: %v, nargs: %d", cmdName, args, len(args))
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("unknown command: %s", cmdName))
+}
+
+func (b *Bot) Init(h *handler.Handlers, ch *command.Handlers) {
+	// Register handlers
+	b.AddHandler(h.Reaction)
+
+	// Register commands
+	b.AddCommand(&Command{
 		Name: "coin",
-		Func: b.CoinCommand(),
+		Func: ch.Coin,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name:  "deal",
-		Func:  b.DealCommand(),
+		Func:  ch.Deal,
 		NArgs: 1,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name: "ping",
-		Func: b.PingCommand(),
+		Func: ch.Ping,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name:  "roll",
-		Func:  b.RollCommand(),
+		Func:  ch.Roll,
 		NArgs: 1,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
+		Name: "roulette",
+		Func: ch.Roulette,
+	})
+	b.AddCommand(&Command{
 		Name:  "rps",
-		Func:  b.RpsCommand(),
+		Func:  ch.Rps,
 		NArgs: 1,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name:  "rpsls",
-		Func:  b.RpslsCommand(),
+		Func:  ch.Rpsls,
 		NArgs: 1,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name:  "time",
-		Func:  b.TimeCommand(),
+		Func:  ch.Time,
 		NArgs: 1,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name: "version",
-		Func: b.VersionCommand(),
+		Func: ch.Version,
 	})
-	AddCommand(&Command{
+	b.AddCommand(&Command{
 		Name:  "weather",
-		Func:  b.WeatherCommand(),
+		Func:  ch.Weather,
 		NArgs: 1,
 	})
-}
-
-func (b *Bot) RegisterHandlers() {
-	b.Session.AddHandler(b.CommandHandler())
-	b.Session.AddHandler(b.ReactionHandler())
 }
 
 func Run() error {
@@ -104,9 +165,8 @@ func Run() error {
 		return fmt.Errorf("error creating discord session: %v", err)
 	}
 
-	b := NewBot(dg, C)
-	b.RegisterHandlers()
-	b.RegisterCommands()
+	b := NewBot(C, dg)
+	b.Init(handler.NewHandlers(C), command.NewHandlers(C))
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages
 

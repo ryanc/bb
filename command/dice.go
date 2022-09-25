@@ -1,4 +1,4 @@
-package bot
+package command
 
 import (
 	"errors"
@@ -78,28 +78,26 @@ func (r *Roll) RollDice() {
 	}
 }
 
-func (b *Bot) RollCommand() CommandFunc {
-	return func(args []string, m *discordgo.MessageCreate) error {
-		var (
-			err       error
-			msg, roll string
-			r         *Roll
-		)
+func (h *Handlers) Roll(args []string, s *discordgo.Session, m *discordgo.MessageCreate) error {
+	var (
+		err       error
+		msg, roll string
+		r         *Roll
+	)
 
-		roll = args[0]
+	roll = args[0]
 
-		r, err = ParseRoll(roll)
-		if err != nil {
-			b.Session.ChannelMessageSend(m.ChannelID, err.Error())
-			return nil
-		}
-
-		r.RollDice()
-		log.Debugf("rolled dice: %+v", r)
-
-		msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
-
-		b.Session.ChannelMessageSend(m.ChannelID, msg)
+	r, err = ParseRoll(roll)
+	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, err.Error())
 		return nil
 	}
+
+	r.RollDice()
+	log.Debugf("rolled dice: %+v", r)
+
+	msg = fmt.Sprintf("🎲 %s = %d", lib.JoinInt(r.Rolls, " + "), r.Sum)
+
+	s.ChannelMessageSend(m.ChannelID, msg)
+	return nil
 }
